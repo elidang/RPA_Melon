@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="container overflow-hidden table-responsive" style="margin-top:100px;">
+    <table class="table align-middle">
+        <thead >
+        <tr class="table-success text-center fs">
+            <th scope="col">순 위</th>
+            <th scope="col">곡 명</th>
+            <th scope="col">가 수</th>
+            <th scope="col">앨 범</th>
+            <th scope="col">좋아요</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% if chart_list %}
+        {% for chart in chart_list %}
+        <tr class="text-center">
+            <td class="fs">{{ forloop.counter }}</td>
+            <td class="text-start">
+                <div class="fw-bold">{{ chart.song }}</div>
+            </td>
+            <td class="fs">{{ chart.singer }}</td>
+            <td class="fs" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ chart.album }}</td>
+            <td class="fs"><i style="color:red;" class="fa fa-heart"></i> {{ chart.likem|intcomma }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="3">챠트 기록이 없습니다.</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    <!-- 페이징 처리 시작 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전 페이지 -->
+        {% if chart_list.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="{{ chart_list.previous_page_number }}">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        <!-- 페이지 리스트 -->
+        {% for page_number in chart_list.paginator.page_range %}
+        {% if page_number >= chart_list.number|add:-5 and page_number <= chart_list.number|add:5 %}
+            {% if page_number == chart_list.number%}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endif %}
+        {% endfor %}
+        <!-- 다음 페이지 -->
+        {% if chart_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ chart_list.next_page_number}}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a href="#" class="page-link" tabindex="-1" aria-disabled="true">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징 처리 끝 -->
+</div>
+
+
+{% endblock %}
